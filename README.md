@@ -1,18 +1,21 @@
 # Text Summarization App
----
 This application allows users to summarize text from different sources using NLP techniques.
 
 ----
 
 ## Table of Contents
----
-1. Overview
 
+1. [Overview](#overview)
+2. [How Code Works](#how-code-works)
+   - [1. `app.py`](#1-apppy)
+   - [2. `summarizer.py`](#2-summarizerpy)
+   - [3. `GetText.py`](#3-gettextpy)
+3. [Interact with the App](#interact-with-the-app)
+4. [Watch the Demo](#watch-the-demo)
 
 ----
 
 ## Overview
----
 This project is a Text Summarizer app built using **Streamlit**. The app allows users to input text in various formats, including:
 * direct text input
 * text files
@@ -24,7 +27,7 @@ then generate a summarized version of the provided text. Using NLP techniques to
 ----
 
 ## How Code Works
----
+
 ### 1. `app.py`
 This file contains the Streamlit app. It handles the user interface, manages input methods, and displays results. the file contain two parts:
 
@@ -69,7 +72,7 @@ This file provides utility functions for extracting text from different sources:
 ----
 
 ## Interact with API:
----
+
 I Build a treamlit app and connect it with Streamlit cloud to can be interacted with others.
 
 ### Access the App from this link:
@@ -81,5 +84,5 @@ Feel free to use any docu (.pdf or .txt), any wikipedia URL or put the text manu
 ----
 
 ## Watch the Demo
----
+
 [DEMO]()
