@@ -8,7 +8,7 @@ from nltk.tokenize.treebank import TreebankWordDetokenizer
 from nltk.probability import FreqDist
 import nltk
 nltk.download('punkt_tab')
-
+nltk.download('stopwords')
 
 def text_summarize(text):
 
