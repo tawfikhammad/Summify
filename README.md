@@ -75,7 +75,7 @@ This file provides utility functions for extracting text from different sources:
 
 I Build a treamlit app and connect it with Streamlit cloud to can be interacted with others.
 
-### Access the App from this link:
+### Access the App from this link: https://summarizer-application.streamlit.app/
 
 LET'S interact with app:
 
