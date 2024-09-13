@@ -7,10 +7,10 @@ This application allows users to summarize text from different sources using NLP
 
 1. [Overview](#overview)
 2. [How Code Works](#how-code-works)
-   - [1. `app.py`](#1-apppy)
-   - [2. `summarizer.py`](#2-summarizerpy)
-   - [3. `GetText.py`](#3-gettextpy)
-3. [Interact with the App](#interact-with-the-app)
+   - [1. app.py](#1-apppy)
+   - [2. summarizer.py](#2-summarizerpy)
+   - [3. GetText.py](#3-gettextpy)
+3. [Interact with the App](#interact-with-api)
 4. [Watch the Demo](#watch-the-demo)
 
 ----
@@ -85,4 +85,5 @@ Feel free to use any docu (.pdf or .txt), any wikipedia URL or put the text manu
 
 ## Watch the Demo
 
-[DEMO]()
+[DEMO](https://github.com/user-attachments/assets/33a9b8fe-407e-4a04-81e2-9bcb475e3abe
+)
