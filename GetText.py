@@ -9,6 +9,8 @@ import pytesseract
 import pdfplumber
 from io import BytesIO
 
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
 def extract_text_from_pdf(pdf_file):
     text = ""
     try:
