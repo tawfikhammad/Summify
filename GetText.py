@@ -49,7 +49,7 @@ def wiki_text(url):
 
 def extractOCR(file, language):
 
-    poppler_path = './bin'  # Path to the Poppler binaries in your project
+    poppler_path = './bin'  # Path to the Poppler binaries
     pages = convert_from_path(file, 500, poppler_path=poppler_path)
 
     text = ''
