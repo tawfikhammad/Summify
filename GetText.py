@@ -8,6 +8,7 @@ from PIL import Image
 import pytesseract
 import pdfplumber
 from io import BytesIO
+import fitz
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -47,10 +48,8 @@ def wiki_text(url):
     return article_text
 
 
-def extractOCR(file, language):
-
-    poppler_path = './bin'  # Path to the Poppler binaries
-    pages = convert_from_path(file, 500, poppler_path=poppler_path)
+'''def extractOCR(file, language):
+    pages = convert_from_path(file, 500)
 
     text = ''
     image_counter = 1
@@ -61,6 +60,31 @@ def extractOCR(file, language):
         text += page
         image_counter = image_counter + 1
 
+    with open('snd_project/text summarizer/output_text.txt', 'w', encoding='utf-8') as file:
+            file.write(text)
+    
+    return text'''
+
+
+def extractOCR(file, language):
+    doc = fitz.open(file)
+    text = ''
+    
+    for page_num in range(doc.page_count):
+        page = doc.load_page(page_num)
+        
+        # Get the page as a pixmap (image)
+        pix = page.get_pixmap()
+        
+        # Convert pixmap to bytes and then to an image
+        img_bytes = pix.tobytes("png")
+        img = Image.open(BytesIO(img_bytes))
+        
+        ocr_text = pytesseract.image_to_string(img, lang=language[:3])
+        ocr_text = ocr_text.replace("-\n", "")
+        
+        text += ocr_text
     
     return text
+
 
