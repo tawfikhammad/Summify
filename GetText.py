@@ -22,7 +22,6 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 
-
 def file_text(file):
     text = file.read().decode("utf-8")
     text = text.replace("\n", '')
@@ -48,21 +47,20 @@ def wiki_text(url):
     return article_text
 
 
-def extractOCR(file):
+def extractOCR(file, language):
     pages = convert_from_path(file, 500)
 
+    text = ''
     image_counter = 1
-    for page in pages:
-        filename = "page_" + str(image_counter) + ".jpg"
-        page.save(filename, "JPEG")
-        image_counter = image_counter + 1
 
-    limit = image_counter-1
-    text = ""
-    for i in range(1, limit + 1):
-        filename = "page_" + str(i) + ".jpg"
-        page = str(((pytesseract.image_to_string(Image.open(filename)))))
+    for page in pages:
+        page = str(((pytesseract.image_to_string(page, lang=f'{language[:3]}'))))
         page = page.replace("-\n", "")
         text += page
-        os.remove(filename)
+        image_counter = image_counter + 1
+
+    with open('snd_project/text summarizer/output_text.txt', 'w', encoding='utf-8') as file:
+            file.write(text)
+    
     return text
+
