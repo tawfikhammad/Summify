@@ -61,8 +61,6 @@ def extractOCR(file, language):
         text += page
         image_counter = image_counter + 1
 
-    with open('snd_project/text summarizer/output_text.txt', 'w', encoding='utf-8') as file:
-            file.write(text)
     
     return text
 
