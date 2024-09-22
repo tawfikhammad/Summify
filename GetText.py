@@ -12,9 +12,7 @@ from bidi.algorithm import get_display
 import tempfile
 
 
-pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
-os.environ['TESSDATA_PREFIX'] = '/tessdata'
-
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 def is_scanned(uploaded_file):
 
     is_scanned = True
