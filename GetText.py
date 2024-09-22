@@ -26,40 +26,41 @@ def is_scanned(uploaded_file):
     return is_scanned
 
 def extract_text_from_pdf(uploaded_file):
-    if is_scanned(uploaded_file):
-        # Convert PDF to images
-        pages = convert_from_path(uploaded_file, 500)
+    # Create a temporary file to save the uploaded PDF
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
+        temp_pdf.write(uploaded_file.read())
+        temp_pdf_path = temp_pdf.name
+    
+    try:
+        # Check if the PDF is scanned
+        if is_scanned(temp_pdf_path):
+            # Convert PDF to images
+            pages = convert_from_path(temp_pdf_path, 500)
 
-        text = ""
-        for page in pages:
-            # Convert each page to an image and extract text
-            img_byte_arr = BytesIO()
-            page.save(img_byte_arr, format='JPEG')
-            img_byte_arr.seek(0)
+            text = ""
+            for page in pages:
+                img_byte_arr = BytesIO()
+                page.save(img_byte_arr, format='JPEG')
+                img_byte_arr.seek(0)
 
-            page_text = pytesseract.image_to_string(Image.open(img_byte_arr))
-            page_text = page_text.replace("-\n", "")
-            text += page_text
-        
-        return text
-    else:
-        # Handle the case where the PDF is not scanned
-        text = ""
-        try:
-            with pdfplumber.open(uploaded_file) as pdf_document:
-                for page in pdf_document.pages:
-                    text += page.extract_text() or ""
-        except Exception as e:
-            print(f"Error extracting text from PDF: {e}")
-        
-        return text
-
-
-def file_text(file):
-    text = file.read().decode("utf-8")
-    text = text.replace("\n", '')
-
-    return text
+                page_text = pytesseract.image_to_string(Image.open(img_byte_arr))
+                page_text = page_text.replace("-\n", "")
+                text += page_text
+            
+            return text
+        else:
+            text = ""
+            try:
+                with pdfplumber.open(temp_pdf_path) as pdf_document:
+                    for page in pdf_document.pages:
+                        text += page.extract_text() or ""
+            except Exception as e:
+                print(f"Error extracting text from PDF: {e}")
+            
+            return text
+    finally:
+        # Cleanup: Remove the temporary file
+        os.remove(temp_pdf_path)
     
 
 # Read wikipedia page url and return its Text   
