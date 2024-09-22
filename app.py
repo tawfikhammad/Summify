@@ -11,22 +11,11 @@ def main():
     if 'text_input' not in st.session_state:
         st.session_state.text_input = ""
 
-    if 'language' not in st.session_state:
-        st.session_state.language = "ar"
-
     # User chooses the input method
     input_method = st.radio(
         "**Choose the input method**", 
-        ("Upload a text file", "Upload a PDF file", "Upload scanned PDF file", "Enter Wikipedia page URL")
+        ("Upload a text file", "Upload a PDF file", "Upload scanned PDF file")
     )
-
-    # Language selection
-    language = st.selectbox(
-        "Choose the language of the text",
-        ["Arabic", "English"],
-        index=0
-    )
-    st.session_state.language = language 
 
     # If "Upload a text file"
     if input_method == "Upload a text file":
@@ -50,17 +39,6 @@ def main():
             
             st.session_state.text_input = extractOCR(temp_pdf_path, st.session_state.language)
             os.remove(temp_pdf_path)  # Delete the temporary file after processing
-
-    # If "Enter Wikipedia page URL"
-    elif input_method == "Enter Wikipedia page URL":
-        wiki_url = st.text_input("Enter Wikipedia page URL")
-        if st.button("Fetch Wikipedia content", key="fetch_wiki_button"):
-            fetched_text = wiki_text(wiki_url)
-            if fetched_text:
-                st.session_state.text_input = fetched_text
-                st.success("Successfully fetched content from Wikipedia!")
-            else:
-                st.error("Failed to fetch content from the URL.")
 
     # Button to summarize
     if st.button('Summarize', key="summarize_button"):
