@@ -9,6 +9,7 @@ import pytesseract
 import pdfplumber
 from io import BytesIO
 from bidi.algorithm import get_display
+import tempfile
 
 
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
