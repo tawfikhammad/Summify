@@ -14,14 +14,12 @@ pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 def is_scanned(pdf_path):
 
     is_scanned = True
-    with open(pdf_path, 'rb') as f:
-        reader = PdfReader(f)
 
-        for page_num in range(len(reader.pages)):
-            text = reader.pages[page_num].extract_text()
-            if text and text.strip():  
-                is_scanned = False
-                break
+    for page_num in range(len(reader.pages)):
+        text = reader.pages[page_num].extract_text()
+        if text and text.strip():  
+            is_scanned = False
+            break
     return is_scanned
 
 def extract_text_from_pdf(pdf_file):
