@@ -12,7 +12,7 @@ from bidi.algorithm import get_display
 import tempfile
 
 
-os.environ['TESSDATA_PREFIX'] = '/usr/share/tesseract-ocr/4.00/ara.traineddata'
+os.environ['TESSDATA_PREFIX'] = '/tessdata/ara.traineddata'
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
 def is_scanned(uploaded_file):
