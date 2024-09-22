@@ -26,23 +26,32 @@ def is_scanned(uploaded_file):
 
 def extract_text_from_pdf(uploaded_file):
 
-    if is_scanned(uploaded_file):
-        pages = convert_from_path(uploaded_file, 500)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
+        temp_pdf.write(uploaded_file.read())
+        temp_pdf_path = temp_pdf.name
+
+    if is_scanned(temp_pdf_path):
+        # Convert the saved PDF to images
+        pages = convert_from_path(temp_pdf_path, 500)
 
         image_counter = 1
-        for page in pages:
-            filename = "page_" + str(image_counter) + ".jpg"
-            page.save(filename, "JPEG")
-            image_counter = image_counter + 1
-    
-        limit = image_counter-1
         text = ""
+
+        for page in pages:
+            filename = f"page_{image_counter}.jpg"
+            page.save(filename, "JPEG")
+            image_counter += 1
+
+        limit = image_counter - 1
+        
         for i in range(1, limit + 1):
-            filename = "page_" + str(i) + ".jpg"
-            page = str(((pytesseract.image_to_string(Image.open(filename)))))
-            page = page.replace("-\n", "")
-            text += page
-            os.remove(filename)
+            filename = f"page_{i}.jpg"
+            page_text = pytesseract.image_to_string(Image.open(filename))
+            page_text = page_text.replace("-\n", "")
+            text += page_text
+            os.remove(filename)  
+
+        os.remove(temp_pdf_path)  
         return text
     else:
         
