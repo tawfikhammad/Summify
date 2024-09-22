@@ -26,8 +26,7 @@ def is_scanned(uploaded_file):
     return is_scanned
 
 def extract_text_from_pdf(uploaded_file):
-
-  if is_scanned(uploaded_file):
+    if is_scanned(uploaded_file):
         # Convert PDF to images
         pages = convert_from_path(uploaded_file, 500)
 
@@ -40,22 +39,20 @@ def extract_text_from_pdf(uploaded_file):
 
             page_text = pytesseract.image_to_string(Image.open(img_byte_arr))
             page_text = page_text.replace("-\n", "")
-            text += page_tex
-        return text
-    else:
+            text += page_text
         
+        return text
+    elif:
+        # Handle the case where the PDF is not scanned
         text = ""
         try:
-            with pdfplumber.open(BytesIO(pdf_file.read())) as pdf_document:
+            with pdfplumber.open(uploaded_file) as pdf_document:
                 for page in pdf_document.pages:
                     text += page.extract_text() or ""
-            text = get_display(text)
-            
         except Exception as e:
             print(f"Error extracting text from PDF: {e}")
-            
+        
         return text
-
 
 
 def file_text(file):
