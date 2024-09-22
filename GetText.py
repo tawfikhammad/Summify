@@ -8,6 +8,8 @@ from PIL import Image
 import pytesseract
 import pdfplumber
 from io import BytesIO
+from bidi.algorithm import get_display
+
 
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
@@ -49,6 +51,8 @@ def extract_text_from_pdf(pdf_file):
             with pdfplumber.open(BytesIO(pdf_file.read())) as pdf_document:
                 for page in pdf_document.pages:
                     text += page.extract_text() or ""
+            text = get_display(text)
+            
         except Exception as e:
             print(f"Error extracting text from PDF: {e}")
             
