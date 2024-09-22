@@ -11,10 +11,10 @@ from io import BytesIO
 
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
-def is_scanned(pdf_path):
+def is_scanned(uploaded_file):
 
     is_scanned = True
-
+    reader = PdfReader(uploaded_file)
     for page_num in range(len(reader.pages)):
         text = reader.pages[page_num].extract_text()
         if text and text.strip():  
