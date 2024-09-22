@@ -43,7 +43,7 @@ def extract_text_from_pdf(uploaded_file):
                 page.save(img_byte_arr, format='JPEG')
                 img_byte_arr.seek(0)
 
-                page_text = pytesseract.image_to_string(Image.open(img_byte_arr))
+                page_text = pytesseract.image_to_string(Image.open(img_byte_arr), lang = 'ara)
                 page_text = page_text.replace("-\n", "")
                 text += page_text
             
