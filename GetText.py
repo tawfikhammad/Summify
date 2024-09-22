@@ -24,10 +24,10 @@ def is_scanned(uploaded_file):
             break
     return is_scanned
 
-def extract_text_from_pdf(pdf_file):
+def extract_text_from_pdf(uploaded_file):
 
-    if is_scanned(pdf_file):
-        pages = convert_from_path(file, 500)
+    if is_scanned(uploaded_file):
+        pages = convert_from_path(uploaded_file, 500)
 
         image_counter = 1
         for page in pages:
