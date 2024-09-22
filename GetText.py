@@ -12,8 +12,8 @@ from bidi.algorithm import get_display
 import tempfile
 
 
-os.environ['TESSDATA_PREFIX'] = '/tessdata'
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
+os.environ['TESSDATA_PREFIX'] = '/tessdata'
 
 def is_scanned(uploaded_file):
 
