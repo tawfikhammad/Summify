@@ -56,7 +56,7 @@ def extract_text_from_pdf(uploaded_file):
                     for page in pdf_document.pages:
                         text += page.extract_text() or ""
 
-                text = display_text(text)
+                text = get_display(text)
             except Exception as e:
                 print(f"Error extracting text from PDF: {e}")
             
