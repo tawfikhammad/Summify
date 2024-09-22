@@ -8,19 +8,54 @@ from PIL import Image
 import pytesseract
 import pdfplumber
 from io import BytesIO
-import fitz
 
-pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
+
+def is_scanned(pdf_path):
+
+    is_scanned = True
+    with open(pdf_path, 'rb') as f:
+        reader = PdfReader(f)
+
+        for page_num in range(len(reader.pages)):
+            text = reader.pages[page_num].extract_text()
+            if text and text.strip():  
+                is_scanned = False
+                break
+    return is_scanned
 
 def extract_text_from_pdf(pdf_file):
-    text = ""
-    try:
-        with pdfplumber.open(BytesIO(pdf_file.read())) as pdf_document:
-            for page in pdf_document.pages:
-                text += page.extract_text() or ""
-    except Exception as e:
-        print(f"Error extracting text from PDF: {e}")
-    return text
+
+    if is_scanned(pdf_file):
+        pages = convert_from_path(file, 500)
+
+        image_counter = 1
+        for page in pages:
+            filename = "page_" + str(image_counter) + ".jpg"
+            page.save(filename, "JPEG")
+            image_counter = image_counter + 1
+    
+        limit = image_counter-1
+        text = ""
+        for i in range(1, limit + 1):
+            filename = "page_" + str(i) + ".jpg"
+            page = str(((pytesseract.image_to_string(Image.open(filename)))))
+            page = page.replace("-\n", "")
+            text += page
+            os.remove(filename)
+        return text
+    else:
+        
+        text = ""
+        try:
+            with pdfplumber.open(BytesIO(pdf_file.read())) as pdf_document:
+                for page in pdf_document.pages:
+                    text += page.extract_text() or ""
+        except Exception as e:
+            print(f"Error extracting text from PDF: {e}")
+            
+        return text
+
 
 
 def file_text(file):
@@ -46,46 +81,3 @@ def wiki_text(url):
     article_text = re.sub(r'\[[0-9]*\]', '', article_text)
 
     return article_text
-
-
-'''def extractOCR(file, language):
-    path = './bin'
-    pages = convert_from_path(file, 500, poppler_path=path)
-
-    text = ''
-    image_counter = 1
-
-    for page in pages:
-        page = str(((pytesseract.image_to_string(page, lang=f'{language[:3]}'))))
-        page = page.replace("-\n", "")
-        text += page
-        image_counter = image_counter + 1
-
-    with open('snd_project/text summarizer/output_text.txt', 'w', encoding='utf-8') as file:
-            file.write(text)
-    
-    return text'''
-
-
-def extractOCR(file, language):
-    doc = fitz.open(file)
-    text = ''
-    
-    for page_num in range(doc.page_count):
-        page = doc.load_page(page_num)
-        
-        # Get the page as a pixmap (image)
-        pix = page.get_pixmap()
-        
-        # Convert pixmap to bytes and then to an image
-        img_bytes = pix.tobytes("png")
-        img = Image.open(BytesIO(img_bytes))
-        
-        ocr_text = pytesseract.image_to_string(img, lang=language[:3])
-        ocr_text = ocr_text.replace("-\n", "")
-        
-        text += ocr_text
-    
-    return text
-
-
