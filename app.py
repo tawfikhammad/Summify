@@ -1,6 +1,6 @@
 import streamlit as st
 from summarizer import text_summarize
-from GetText import extract_text_from_pdf, file_text, wiki_text
+from GetText import extract_text_from_pdf
 
 def main():
     st.title('Text Summarizer')
