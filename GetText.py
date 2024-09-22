@@ -42,7 +42,7 @@ def extract_text_from_pdf(uploaded_file):
             text += page_text
         
         return text
-    elif:
+    else:
         # Handle the case where the PDF is not scanned
         text = ""
         try:
