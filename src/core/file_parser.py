@@ -2,17 +2,16 @@ from fastapi import UploadFile, status
 from fastapi.responses import JSONResponse
 import pymupdf
 from helpers.enums import ExtractionEnums
-from helpers import CleanText
-from config import get_settings
+from config import settings
 from pdf2image import convert_from_bytes
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd =  get_settings().TESSERACT_CMD
+pytesseract.pytesseract.tesseract_cmd =  settings.TESSERACT_CMD
 
 
 class FileParser:
     
     @staticmethod
-    async def get_nativepdf_text(file: UploadFile) -> JSONResponse:
+    async def get_nativepdf_text(file: UploadFile) -> dict:
 
         try:
             content = await file.read()
@@ -22,22 +21,21 @@ class FileParser:
             text = "".join(page.get_text() for page in doc)
 
             if not text or text == " ":
-                return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": ExtractionEnums.NO_TEXT_FOUND.value})
+                return {'status_code':  status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                        'content':{"message": ExtractionEnums.NO_TEXT_FOUND.value}}
             
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content={
-                    "message": ExtractionEnums.SUCCESSFUL_EXTRACTION.value,
-                    "text": "\n\n".join(text)
-                })
+            return {'status_code': status.HTTP_200_OK, 
+                    'content':{"message": ExtractionEnums.SUCCESSFUL_EXTRACTION.value,
+                                "text": text}}
         
         except Exception as e:
             print(f"Error text extracting from PDF: {e}")
-            return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"message": ExtractionEnums.UNSUCCESSFUL_EXTRACTION.value}) 
+            return {'status_code': status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                    'content':{"message": ExtractionEnums.UNSUCCESSFUL_EXTRACTION.value}}
 
 
     @staticmethod
-    async def get_scannedpdf_text(file: UploadFile) -> JSONResponse:
+    async def get_scannedpdf_text(file: UploadFile) -> dict:
         try:
             pdf_content = await file.read()
             await file.seek(0)  
@@ -59,22 +57,20 @@ class FileParser:
             text = "\n\n".join(text)
 
             if not text or text == " ":
-                return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"message": ExtractionEnums.NO_TEXT_FOUND.value})
+                return {'status_code':  status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                        'content':{"message": ExtractionEnums.NO_TEXT_FOUND.value}}
             
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content={
-                    "message": ExtractionEnums.SUCCESSFUL_EXTRACTION.value,
-                    "text": text
-                })
+            return {'status_code': status.HTTP_200_OK, 
+                    'content':{"message": ExtractionEnums.SUCCESSFUL_EXTRACTION.value,
+                                "text": text}}
                 
         except Exception as e:
             print(f"OCR extraction failed: {str(e)}")
-            return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content={"message": ExtractionEnums.UNSUCCESSFUL_EXTRACTION.value})
-
+            return {'status_code': status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                    'content':{"message": ExtractionEnums.UNSUCCESSFUL_EXTRACTION.value}}
 
     @staticmethod
-    async def get_txtfile_text(file: UploadFile) -> JSONResponse:
+    async def get_txtfile_text(file: UploadFile) -> dict:
 
         try:
             content = await file.read()
@@ -83,26 +79,19 @@ class FileParser:
             try:
                 text = content.decode('utf-8').replace('\r\n', '\n').strip()
             except UnicodeDecodeError:
-                return JSONResponse(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    content={"message": "File contains invalid UTF-8 encoding"})
+                return {'status_code':  status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        'content':{"message": ExtractionEnums.INVALID_ENCODING.value}}
 
             if not text:
-                return JSONResponse(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    content={"message": ExtractionEnums.NO_TEXT_FOUND.value}
-                )
-
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content={
-                    "message": ExtractionEnums.SUCCESSFUL_EXTRACTION.value,
-                    "text": text
-                })
+                return {'status_code':  status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        'content':{"message": ExtractionEnums.NO_TEXT_FOUND.value}}
+            
+            return {'status_code': status.HTTP_200_OK, 
+                    'content':{"message": ExtractionEnums.SUCCESSFUL_EXTRACTION.value,
+                                "text": text}}
 
         except Exception as e:
-            return JSONResponse(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                content={"message": f"Text file processing failed: {str(e)}"})
+            return {'status_code': status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                    'content':{"message": ExtractionEnums.UNSUCCESSFUL_EXTRACTION.value}}
 
     
