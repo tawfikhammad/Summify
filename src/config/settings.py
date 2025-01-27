@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     MAX_FILE_SIZE: int
     TESSERACT_CMD: str
     ARA_MODEL: str
+    ARA_TOKENIZER: str
     ENG_MODEL: str
 
     class Config:
