@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 class TextSummarizer:
     def __init__(self, text:str):
 
-        if not text or len(text.strip()) < 150:              # Minimum 150 chars
-            raise ValueError(SummaryEnums.INVALID_TEXT.value)
+        if not text or len(text.strip()) < 150:              
+            raise ValueError(SummaryEnums.INVALID_EXTRACTED_TEXT.value)
         self.text = text
 
         response = LangDetector.detect(text)
@@ -28,7 +28,7 @@ class TextSummarizer:
             logger.error(response['content']['message'])
             raise ValueError(SummaryEnums.UNSUPPORTED_LANGUAGE.value)
         
-    async def abstractive_summarize(self, max_length: int = 300)-> JSONResponse:
+    async def abstractive_summarize(self, max_length: int = 100)-> JSONResponse:
 
         try:
             if self.lang == 'en':
@@ -51,14 +51,14 @@ class TextSummarizer:
                                                                     "summary": summary})
         
         
-    async def extractive_summarize(self, sentences_count: int = 3) -> str:
+    async def extractive_summarize(self, num_sentences: int = 1) -> JSONResponse:
 
         processor = TextProcessor(self.text, self.lang)
         sentences = await processor.get_sentences()
             
         parser = PlaintextParser.from_string(" ".join(sentences), Tokenizer(self.lang))
         summarizer = TextRankSummarizer()
-        summary = summarizer(parser.document, sentences_count)
+        summary = summarizer(parser.document, num_sentences)
         text = " ".join([str(sentence) for sentence in summary])
         
         if not text or text == "":
