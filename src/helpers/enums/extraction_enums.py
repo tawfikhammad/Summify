@@ -6,3 +6,4 @@ class ExtractionEnums(Enum):
     UNSUCCESSFUL_EXTRACTION = "Text extraction unsuccessful"
     NO_TEXT_FOUND = "No text found in file"
     INVALID_ENCODING = "File contains invalid UTF-8 encoding"
+    UNSUPPORTED_FILE_TYPE = "Unsupported file type"

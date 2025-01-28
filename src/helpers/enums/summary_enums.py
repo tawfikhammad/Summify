@@ -5,4 +5,9 @@ class SummaryEnums(str, Enum):
     EMPTY_SUMMARY = "Empty generated summary"
     LENGTH_MISMATCH = "Summary length exceeds original text"
     UNSUPPORTED_LANGUAGE = "Unsupported language"
-    INVALID_TEXT = "No text found or text is too short"
+    INVALID_EXTRACTED_TEXT = "No extracted text found or it's too short"
+
+class SummApproach(str, Enum):
+
+    EXTRACTIVE = "extractive"
+    ABSTRACTIVE = "abstractive"
