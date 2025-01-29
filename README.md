@@ -1,89 +1,177 @@
-# Text Summarization App
-This application allows users to summarize text from different sources using NLP techniques.
 
-----
+# Summify
+
+A FastAPI-based document summarization service that supports both **extractive** and **abstractive** summarization. It allows users to upload documents (PDF or text files) and receive summaries based on their preferred summarization approach.
+
+---
 
 ## Table of Contents
+1. [Project Structure](#project-structure)
+2. [API Routes](#api-routes)
+3. [How to Use](#how-to-use)
+4. [Installation](#installation)
+5. [Technologies Used](#technologies-used)
+6. [Connect with Me](#connect-with-me)
 
-1. [Overview](#overview)
-2. [How Code Works](#how-code-works)
-   - [1. app.py](#1-apppy)
-   - [2. summarizer.py](#2-summarizerpy)
-   - [3. GetText.py](#3-gettextpy)
-3. [Interact with the App](#interact-with-api)
-4. [Watch the Demo](#watch-the-demo)
+---
 
-----
+## Project Structure
 
-## Overview
-This project is a Text Summarizer app built using **Streamlit**. The app allows users to input text in various formats, including:
-* direct text input
-* text files
-* PDF files
-* and Wikipedia URLs
+```
+Summify/
+├── src/                              
+│   ├── assets/                       
+│   │   └── test_cases/               
+│   │       ├── nativepdf_ar.pdf
+│   │       ├── nativepdf_fr.pdf
+│   │       ├── scanned_ar1.pdf
+│   │       ├── scanned_ar2.pdf
+│   │       ├── scannedpdf_en.pdf
+│   │       └── text.txt
+│   ├── config/                       
+│   │   ├── __init__.py
+│   │   └── settings.py               
+│   ├── controllers/                  
+│   │   ├── __init__.py
+│   │   ├── BaseController.py         
+│   │   └── SummaryController.py      
+│   ├── core/                         
+│   │   ├── __init__.py
+│   │   ├── file_parser.py            
+│   │   └── summarizer.py             
+│   ├── helpers/                      
+│   │   ├── enums/                    
+│   │   │   ├── __init__.py
+|   |   |   ├── extraction_enums.py
+|   |   |   ├── scan_enums.py
+|   |   |   ├── summary_enums.py
+|   |   |   └── validation_enums.py
+│   │   ├── file_validation.py        
+│   │   ├── lang_detection.py         
+│   │   ├── scan_checker.py           
+│   │   └── text_processing.py        
+│   └── routes/                       
+│       ├── __init__.py
+|       ├── base.py
+│       ├── summary.py                
+│       └── schemas/                      
+│           ├── __init__.py
+│           └── upload_request.py                  
+│                            
+├── .env                              
+├── .env.example                      
+├── .gitignore                        
+├── main.py                           
+├── requirements.txt                  
+├── LICENSE                           
+└── README.md                         
+```
 
-then generate a summarized version of the provided text. Using NLP techniques to extract key sentences from the text and display a concise summary.
+---
 
-----
+## API Routes
 
-## How Code Works
+### **Get `/welcome`**
+For Welcome message
 
-### 1. `app.py`
-This file contains the Streamlit app. It handles the user interface, manages input methods, and displays results. the file contain two parts:
+### **POST `/data/summary/file`**
+Summarize a document (PDF or text file).
 
-The user's input choice:
+#### Request:
+- **Method**: `POST`
+- **Content-Type**: `multipart/form-data`
+- **Body**:
+  - `file`: The document to summarize (PDF or text file).
+  - `summ_approach`: The summarization approach (`abstractive` or `extractive`).
+  - `max_length`: The maximum length of the summary (required for `abstractive`).
+  - `sentences_num` : The maximum sentence count of the summary (required for `extractive`).
 
-1. **"Enter text directly"**:
-   - The user manually input text and it is saved in the session state variable `st.session_state.text_input`.
+#### Example Request:
+```bash
+curl -X POST "http://localhost:8000/data/summary/file" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@document.pdf" \
+  -F "summ_approach=abstractive" \
+  -F "max_length=500"
+```
 
+#### Response:
+```json
+{
+  "summary": "generated summary of the document..."
+}
+```
 
-2. **"Upload a text file"**:
-   - The user upload a `.txt` file using `st.file_uploader()` and the code reads the contents of the file using the `file_text()` function Then the stored in `st.session_state.text_input`
+---
 
-3. **"Upload a PDF file"**:
-   - The user upload a `.pdf` file using `st.file_uploader()` the text is extracted using the `extract_text_from_pdf()` function and the text is saved to the session state variable.
+## How to Use
 
-4. **"Enter Wikipedia page URL"**:
-   - The user input a Wikipedia page URL. Once the user must click the "Fetch Wikipedia content" button to retrieve the content from the given Wikipedia page Using `wiki_text()` func. If the scraping is successful, the fetched Wikipedia content is saved in `st.session_state.text_input`
-   
+### 1. **Install Dependencies**
+Make sure you have Python 3.8<  3.13> installed. Then, install the required dependencies:
 
-Summarizing the Text:
+```bash
+pip install -r requirements.txt
+```
 
-   - After any of the above input methods the user can click the "Summarize" button. The code checks if `st.session_state.text_input` contains any text. If text is available, it calls the `text_summarize()` function to generate a summary. Finally the summarized text is then displayed to the user.
+### 2. **Run the Application**
+Start the FastAPI server:
 
+```bash
+cd src
+python main.py
+```
 
-### 2. `summarizer.py`
-This file contains the `text_summarize` function, which is responsible for processing the text and generating the summary.
+The API will be available at `http://localhost:8000`.
 
-I summary the steps are:
+### 3. **Test the API**
+You can use tools like **Postman** to test the API. Refer to the [API Routes](#api-routes) section for examples.
 
-- Tokenizes the text into sentences and words.
-- Removes stopwords and computes word frequency.
-- Scores each sentence based on the importance of words it contains.
-- Extracts and returns the MOST IMPORTANT sentences as a summary.
+---
 
-### 3. `GetText.py`
-This file provides utility functions for extracting text from different sources:
-- **`extract_text_from_pdf`**: Extracts text from a PDF file.
-- **`file_text`**: Reads and processes a text file.
-- **`wiki_text`**: Scrapes and extracts text from a Wikipedia page.
-- **`extractOCR`**: For extracting text from image-based PDF files using OCR. WILL BE ADDED  
+## Installation
 
-----
+### Prerequisites
+- Python 3.8 - 3.12.8
+- Pip (Python package manager)
 
-## Interact with API:
+### Steps
+1. Clone the repository:
 
-I Build a treamlit app and connect it with Streamlit cloud to can be interacted with others.
+    ```bash
+    git clone https://github.com/tawfikhammad/Summify.git
+    cd Summify
+    ```
 
-### Access the App from this link: https://summarizer-application.streamlit.app/
+2. Set up a virtual environment:
 
-LET'S interact with app:
+    ```bash
+    conda create --name summify python=3.12.8
+    conda activate summify
+    ```
 
-Feel free to use any docu (.pdf or .txt), any wikipedia URL or put the text manually and the app will show the summary of text.
+3. Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-----
+4. Run the application:
+    ```bash
+    cd src
+    python main.py
+    ```
 
-## Watch the Demo
+---
 
-[DEMO](https://github.com/user-attachments/assets/33a9b8fe-407e-4a04-81e2-9bcb475e3abe
-)
+## Connect with Me
+
+If you have any questions, suggestions, or just want to connect, feel free to reach out to me on LinkedIn:
+
+👉 [Tawfik Hammad](https://www.linkedin.com/in/tawfikhammad)
+
+Let’s connect and collaborate!
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
