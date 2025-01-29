@@ -10,8 +10,7 @@ A FastAPI-based document summarization service that supports both **extractive**
 2. [API Routes](#api-routes)
 3. [How to Use](#how-to-use)
 4. [Installation](#installation)
-5. [Technologies Used](#technologies-used)
-6. [Connect with Me](#connect-with-me)
+5. [Connect with Me](#connect-with-me)
 
 ---
 
